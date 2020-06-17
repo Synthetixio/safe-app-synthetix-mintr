@@ -258,7 +258,7 @@ const useGetIssuanceData = (walletAddress: string, sUSDBytes: any): Data => {
   return data;
 };
 
-function Mint({ address }: any) {
+function Mint({ address, appsSdk }: any) {
   const [mintAmount, setMintAmount] = useState('');
   const [error, setError] = useState('');
 
@@ -280,6 +280,41 @@ function Mint({ address }: any) {
       setError('');
     }
   }, [mintAmount, issuableSynths]);
+
+  const handleMint = () => {
+    const {
+      // @ts-ignore
+      snxJS: { Synthetix }
+    } = snxJSConnector;
+    let tx;
+    const parsedMintAmount = parseFloat(mintAmount);
+    if (!parsedMintAmount) {
+      return;
+    }
+    if (parsedMintAmount === issuableSynths) {
+      // @ts-ignore
+      const iface = new snxJSConnector.ethersUtils.Interface(
+        Synthetix.contract.interface.functions.issueMaxSynths
+      );
+      tx = iface.functions.issueMaxSynths.encode();
+    } else {
+      // @ts-ignore
+      const iface = new snxJSConnector.ethersUtils.Interface([
+        'function issueSynths(uint amount) external'
+      ]);
+      tx = {
+        // @ts-ignore
+        to: snxJSConnector.utils.contractSettings.addressList.Issuer,
+        value: 0,
+        data: iface.functions.issueSynths.encode([
+          // @ts-ignore
+          snxJSConnector.utils.parseEther(parsedMintAmount.toString())
+        ])
+      };
+    }
+
+    appsSdk.sendTransactions([tx]);
+  };
 
   return (
     <>
@@ -328,20 +363,22 @@ function Mint({ address }: any) {
           </Text>
         </TextContainer>
 
-        <StyledButton variant="contained">Mint Now</StyledButton>
+        <StyledButton variant="contained" onClick={handleMint}>
+          Mint Now
+        </StyledButton>
       </div>
     </>
   );
 }
 
-function MintPage({ address }: any) {
+function MintPage({ address, appsSdk }: any) {
   return (
     <StyledGrid container spacing={4}>
       <Grid item sm={6}>
         <Left />
       </Grid>
       <Grid item sm={6}>
-        <Mint address={address} />
+        <Mint address={address} appsSdk={appsSdk} />
       </Grid>
     </StyledGrid>
   );
