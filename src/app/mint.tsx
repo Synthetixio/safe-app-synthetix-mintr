@@ -274,7 +274,9 @@ function Mint({ address, appsSdk }: any) {
   useEffect(() => {
     const parsedMintAmount = parseFloat(mintAmount);
 
-    if (parsedMintAmount <= 0 || parsedMintAmount > issuableSynths) {
+    if (parsedMintAmount <= 0) {
+      setError('Invalid amount');
+    } else if (parsedMintAmount > issuableSynths) {
       setError('Cannot mint that much sUSD');
     } else {
       setError('');
