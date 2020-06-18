@@ -300,11 +300,27 @@ function Mint({ address, appsSdk }: any) {
     } else {
       // @ts-ignore
       const iface = new snxJSConnector.ethersUtils.Interface([
-        'function issueSynths(uint amount) external'
+        {
+          constant: false,
+          inputs: [
+            {
+              internalType: 'uint256',
+              name: 'amount',
+              type: 'uint256'
+            }
+          ],
+          name: 'issueSynths',
+          outputs: [],
+          payable: false,
+          stateMutability: 'nonpayable',
+          type: 'function',
+          signature: '0x8a290014'
+        }
+        //'function issueSynths(uint amount) external'
       ]);
       tx = {
         // @ts-ignore
-        to: snxJSConnector.utils.contractSettings.addressList.Issuer,
+        to: snxJSConnector.utils.contractSettings.addressList.Synthetix,
         value: 0,
         data: iface.functions.issueSynths.encode([
           // @ts-ignore
