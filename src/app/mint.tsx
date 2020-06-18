@@ -286,48 +286,51 @@ function Mint({ address, appsSdk }: any) {
       // @ts-ignore
       snxJS: { Synthetix }
     } = snxJSConnector;
-    let tx;
+    let data;
     const parsedMintAmount = parseFloat(mintAmount);
     if (!parsedMintAmount) {
       return;
     }
     if (parsedMintAmount === issuableSynths) {
       // @ts-ignore
-      const iface = new snxJSConnector.ethersUtils.Interface(
+      const iface = new snxJSConnector.ethersUtils.Interface([
         Synthetix.contract.interface.functions.issueMaxSynths
-      );
-      tx = iface.functions.issueMaxSynths.encode();
+      ]);
+      data = iface.functions.issueMaxSynths.encode();
     } else {
       // @ts-ignore
       const iface = new snxJSConnector.ethersUtils.Interface([
-        {
-          constant: false,
-          inputs: [
-            {
-              internalType: 'uint256',
-              name: 'amount',
-              type: 'uint256'
-            }
-          ],
-          name: 'issueSynths',
-          outputs: [],
-          payable: false,
-          stateMutability: 'nonpayable',
-          type: 'function',
-          signature: '0x8a290014'
-        }
+        Synthetix.contract.interface.functions.issueSynths
+        // {
+        //   constant: false,
+        //   inputs: [
+        //     {
+        //       internalType: 'uint256',
+        //       name: 'amount',
+        //       type: 'uint256'
+        //     }
+        //   ],
+        //   name: 'issueSynths',
+        //   outputs: [],
+        //   payable: false,
+        //   stateMutability: 'nonpayable',
+        //   type: 'function',
+        //   signature: '0x8a290014'
+        // }
         //'function issueSynths(uint amount) external'
       ]);
-      tx = {
+      data = iface.functions.issueSynths.encode([
         // @ts-ignore
-        to: snxJSConnector.utils.contractSettings.addressList.Synthetix,
-        value: 0,
-        data: iface.functions.issueSynths.encode([
-          // @ts-ignore
-          snxJSConnector.utils.parseEther(parsedMintAmount.toString())
-        ])
-      };
+        snxJSConnector.utils.parseEther(parsedMintAmount.toString())
+      ]);
     }
+
+    const tx = {
+      // @ts-ignore
+      to: snxJSConnector.utils.contractSettings.addressList.Synthetix,
+      value: 0,
+      data
+    };
 
     appsSdk.sendTransactions([tx]);
   };
