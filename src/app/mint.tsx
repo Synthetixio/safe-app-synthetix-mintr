@@ -21,6 +21,7 @@ import { getBalancesWithRates } from './balancesHelpers';
 import IconText from '../components/IconText';
 import snxJSConnector from '../helpers/snxJSConnector';
 import { estimateCRatio, getStakingAmount } from './mint-helpers';
+import numbro from 'numbro';
 
 const Asset = styled.div``;
 const StyledTotalSnx = styled(Grid)``;
@@ -289,7 +290,7 @@ function Mint({ address, appsSdk }: any) {
       snxJS: { Synthetix }
     } = snxJSConnector;
     let data;
-    const parsedMintAmount = parseFloat(mintAmount);
+    const parsedMintAmount = numbro(mintAmount).value();
     if (!parsedMintAmount) {
       return;
     }
@@ -359,7 +360,11 @@ function Mint({ address, appsSdk }: any) {
           </Text>
         </TextContainer>
 
-        <StyledButton variant="contained" onClick={handleMint}>
+        <StyledButton
+          variant="contained"
+          onClick={handleMint}
+          disabled={!!error || !numbro(mintAmount).value()}
+        >
           Mint Now
         </StyledButton>
       </div>
