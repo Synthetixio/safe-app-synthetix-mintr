@@ -292,34 +292,9 @@ function Mint({ address, appsSdk }: any) {
       return;
     }
     if (parsedMintAmount === issuableSynths) {
-      // @ts-ignore
-      const iface = new snxJSConnector.ethersUtils.Interface([
-        Synthetix.contract.interface.functions.issueMaxSynths
-      ]);
-      data = iface.functions.issueMaxSynths.encode();
+      data = Synthetix.contract.interface.functions.issueMaxSynths.encode([]);
     } else {
-      // @ts-ignore
-      const iface = new snxJSConnector.ethersUtils.Interface([
-        Synthetix.contract.interface.functions.issueSynths
-        // {
-        //   constant: false,
-        //   inputs: [
-        //     {
-        //       internalType: 'uint256',
-        //       name: 'amount',
-        //       type: 'uint256'
-        //     }
-        //   ],
-        //   name: 'issueSynths',
-        //   outputs: [],
-        //   payable: false,
-        //   stateMutability: 'nonpayable',
-        //   type: 'function',
-        //   signature: '0x8a290014'
-        // }
-        //'function issueSynths(uint amount) external'
-      ]);
-      data = iface.functions.issueSynths.encode([
+      data = Synthetix.contract.interface.functions.issueSynths.encode([
         // @ts-ignore
         snxJSConnector.utils.parseEther(parsedMintAmount.toString())
       ]);
