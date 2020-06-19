@@ -26,7 +26,6 @@ const StyledButton = styled(Button)`
     font-size: 1rem;
     padding: 16px 24px;
     width: 100%;
-    max-width: 370px;
   }
 
   &.MuiButton-root:hover {
@@ -38,6 +37,7 @@ const MaxButton = styled(Button)`
   &.MuiButton-root {
     background-color: ${({ theme }) => theme.colors.primary};
     color: #ffffff;
+    width: 100%;
   }
 
   &.MuiButton-root:hover {
@@ -49,6 +49,10 @@ const StyledTextField = styled(TextField)`
   &.MuiTextField-root {
     width: 100%;
   }
+`;
+
+const StyledText = styled(Text)`
+  margin-bottom: 0.5rem;
 `;
 
 const StyledIconText = styled(IconText)`
@@ -188,7 +192,7 @@ function Mint({ address, appsSdk }: any) {
         description="Mint sUSD by staking your SNX. This gives you a Collateralization Rate and a debt, allowing you to earn staking rewards."
       />
       <StyledPaper elevation={3}>
-        <Text size="lg">Confirm or enter the amount to mint</Text>
+        <StyledText size="lg">Confirm or enter the amount to mint</StyledText>
         <Grid container spacing={2} alignItems="center" justify="flex-start">
           <Grid item sm={2}>
             <StyledIconText
@@ -246,7 +250,7 @@ function Mint({ address, appsSdk }: any) {
 
 function MintPage({ address, appsSdk }: any) {
   return (
-    <StyledGrid container spacing={5}>
+    <StyledGrid container>
       <Grid item sm={6}>
         <Balance />
       </Grid>
