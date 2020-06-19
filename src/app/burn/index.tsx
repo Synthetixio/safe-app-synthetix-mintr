@@ -265,14 +265,9 @@ function Mint({ address, appsSdk }: any) {
       if (!(await Issuer.canBurnSynths(address)))
         throw new Error('Waiting period to burn is still ongoing');
 
-      const amountToBurn =
-        burnAmount === maxBurnAmount
-          ? maxBurnAmountBN
-          : // @ts-ignore
-            snxJSConnector.utils.parseEther(burnAmount.toString());
       data = Synthetix.contract.interface.functions.burnSynths.encode([
         // @ts-ignore
-        snxJSConnector.utils.parseEther(amountToBurn.toString())
+        snxJSConnector.utils.parseEther(parsedBurnAmount.toString())
       ]);
     } catch (error) {
       console.error(error);
