@@ -24,6 +24,10 @@ const StyledPaper = styled(Paper)`
   }
 `;
 
+const StyledGridItem = styled(Grid)`
+  padding-right: 24px;
+`;
+
 const BurnButton = styled(Button)`
   &.MuiButton-root {
     background-color: ${({ theme }) => theme.colors.primary};
@@ -47,6 +51,13 @@ const StyledButton = styled(Button)`
 
   &.MuiButton-root:hover {
     background-color: #8c94ff;
+  }
+
+  @media screen and (max-width: 900px) {
+    &.MuiButton-root {
+      font-size: 0.7rem;
+      padding: 4px;
+    }
   }
 `;
 
@@ -165,7 +176,7 @@ function Mint({ address, appsSdk }: any) {
   const sUSDBytes = bytesFormatter('sUSD');
   const {
     maxBurnAmount,
-    maxBurnAmountBN,
+    //maxBurnAmountBN,
     sUSDBalance,
     //issuanceRatio,
     //SNXPrice,
@@ -373,9 +384,9 @@ function Mint({ address, appsSdk }: any) {
 function BurnPage({ address, appsSdk }: any) {
   return (
     <StyledGrid container>
-      <Grid item sm={6}>
+      <StyledGridItem item sm={6}>
         <Balance />
-      </Grid>
+      </StyledGridItem>
       <Grid item sm={6}>
         <Mint address={address} appsSdk={appsSdk} />
       </Grid>
