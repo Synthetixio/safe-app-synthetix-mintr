@@ -1,42 +1,17 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Divider, Text, TextField } from '@gnosis.pm/safe-react-components';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import { Text, TextField } from '@gnosis.pm/safe-react-components';
 import Button from '@material-ui/core/Button';
-import Stat from '../components/Stat';
-import Icon from '../components/Icon';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-
-
-import Section from '../components/Section';
-import {
-  formatCurrency,
-  bytesFormatter,
-  bigNumberFormatter
-} from '../helpers/formatters';
-import { RatesContext } from './RatesProvider';
-import { BalancesContext } from './BalancesProvider';
-import { CRYPTO_CURRENCY_TO_KEY } from '../constants/currency';
-import BalanceTable from '../components/Table/BalanceTable';
-import { getBalancesWithRates } from './balancesHelpers';
-import IconText from '../components/IconText';
-import snxJSConnector from '../helpers/snxJSConnector';
-import { estimateCRatio, getStakingAmount } from './mint-helpers';
 import numbro from 'numbro';
-
-const Asset = styled.div``;
-const StyledTotalSnx = styled(Grid)``;
-const StyledLinearProgress = styled(LinearProgress)`
-  &.MuiLinearProgress-root {
-    height: 15px;
-    margin-bottom: 10px;
-    background-color: ${({ theme }) => theme.colors.primaryLight};
-  }
-  & .MuiLinearProgress-barColorPrimary {
-    background-color: ${({ theme }) => theme.colors.secondary};
-  }
-`;
+import Section from '../../components/Section';
+import Icon from '../../components/Icon';
+import { bytesFormatter, bigNumberFormatter } from '../../helpers/formatters';
+import IconText from '../../components/IconText';
+import snxJSConnector from '../../helpers/snxJSConnector';
+import { estimateCRatio, getStakingAmount } from './mint-helpers';
+import Balance from '../Balance';
 
 const StyledPaper = styled(Paper)`
   &.MuiPaper-root {
@@ -82,7 +57,7 @@ const StyledIconText = styled(IconText)`
   padding: 4px;
   border-radius: 4px 0 0 4px;
   width: 100%;
- `;
+`;
 
 const StyledGrid = styled(Grid)`
   margin-top: 20px !important;
@@ -93,128 +68,6 @@ const TextContainer = styled.div`
   justify-content: space-between;
   margin: 0.8rem 0 2rem 0;
 `;
-
-const TableContainer = styled.div`
-  margin-top: 1rem;
-`;
-
-const TotalSnx = () => {
-  const { balances = {}, data = {} }: any = useContext(BalancesContext);
-  const snxBalance = balances[CRYPTO_CURRENCY_TO_KEY.SNX];
-  const snxLocked =
-    snxBalance &&
-    data?.debtData?.currentCRatio &&
-    data?.debtData?.targetCRatio &&
-    snxBalance *
-      Math.min(1, data?.debtData?.currentCRatio / data?.debtData?.targetCRatio);
-  return (
-    <StyledTotalSnx container>
-      <Grid item xs={6}>
-        <Text size="sm">TOTAL:</Text>
-      </Grid>
-      <Grid item xs={6}>
-        <Text size="sm" strong>
-          {formatCurrency(snxBalance) || 0} SNX
-        </Text>
-      </Grid>
-      <Divider />
-      <Grid item xs={6}>
-        <Text size="sm">
-          Locked:{' '}
-          {formatCurrency(snxBalance - data?.debtData?.transferable || 0)}
-        </Text>
-      </Grid>
-      <Grid item xs={6}>
-        <Text size="sm">
-          Transferable: {formatCurrency(data?.debtData?.transferable || 0)}
-        </Text>
-      </Grid>
-      <Grid item xs={12}>
-        <StyledLinearProgress
-          variant="determinate"
-          value={Math.max(
-            (100 * (snxBalance - data?.debtData?.transferable)) / snxBalance,
-            1
-          )}
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <Text size="sm">Staked: {formatCurrency(snxLocked)}</Text>
-      </Grid>
-      <Grid item xs={6}>
-        <Text size="sm">
-          Not staked: {formatCurrency(snxBalance - snxLocked || 0)}
-        </Text>
-      </Grid>
-      <Grid item xs={12}>
-        <StyledLinearProgress
-          variant="determinate"
-          color="primary"
-          value={Math.max(100 * (snxLocked / snxBalance), 1)}
-        />
-      </Grid>
-    </StyledTotalSnx>
-  );
-};
-
-function Left() {
-  const rates: any = useContext(RatesContext);
-  const { balances = {}, data = {} }: any = useContext(BalancesContext);
-  const walletBalancesWithRates = getBalancesWithRates(rates, balances);
-  const currentRatio = data?.debtData?.currentCRatio
-    ? Math.round(100 / data?.debtData?.currentCRatio)
-    : 0;
-  const ratioTarget = data?.debtData?.targetCRatio
-    ? Math.round(100 / data?.debtData?.targetCRatio)
-    : 0;
-
-  return (
-    <>
-      <Grid container>
-        <Grid item xs={12} sm={6}>
-          <Stat
-            stat={`${currentRatio}%`}
-            description="Current collateralization ratio"
-          ></Stat>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Stat
-            stat={`${ratioTarget}%`}
-            description="Target collateralization ratio"
-          ></Stat>
-        </Grid>
-      </Grid>
-
-      <Grid container>
-        <Grid item container xs={12} sm={6} direction="column" justify="center">
-          {['SNX', 'ETH'].map((asset: any) => (
-            <Asset key={asset}>
-              <IconText
-                iconSize="sm"
-                textSize="lg"
-                iconType={asset.toLocaleLowerCase()}
-                text={`1 ${asset} = $
-                ${formatCurrency(rates[asset])} USD`}
-              />
-            </Asset>
-          ))}
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <TotalSnx />
-        </Grid>
-      </Grid>
-
-      <TableContainer>
-        <BalanceTable
-          rates={rates}
-          debtData={data.debtData}
-          walletBalancesWithRates={walletBalancesWithRates}
-        />
-      </TableContainer>
-    </>
-  );
-}
 
 type Data = {
   issuableSynths: any;
@@ -338,7 +191,12 @@ function Mint({ address, appsSdk }: any) {
         <Text size="lg">Confirm or enter the amount to mint</Text>
         <Grid container spacing={2} alignItems="center" justify="flex-start">
           <Grid item sm={2}>
-            <StyledIconText iconSize="sm" textSize="lg" iconType="susd" text="sUSD" />
+            <StyledIconText
+              iconSize="sm"
+              textSize="lg"
+              iconType="susd"
+              text="sUSD"
+            />
           </Grid>
           <Grid item sm={7}>
             <StyledTextField
@@ -390,7 +248,7 @@ function MintPage({ address, appsSdk }: any) {
   return (
     <StyledGrid container spacing={5}>
       <Grid item sm={6}>
-        <Left />
+        <Balance />
       </Grid>
       <Grid item sm={6}>
         <Mint address={address} appsSdk={appsSdk} />
