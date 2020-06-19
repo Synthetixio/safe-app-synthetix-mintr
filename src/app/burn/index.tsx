@@ -10,7 +10,8 @@ import Icon from '../../components/Icon';
 import {
   bytesFormatter,
   bigNumberFormatter,
-  formatCurrency
+  formatCurrency,
+  secondsToTime
 } from '../../helpers/formatters';
 import IconText from '../../components/IconText';
 import snxJSConnector from '../../helpers/snxJSConnector';
@@ -177,10 +178,10 @@ function Mint({ address, appsSdk }: any) {
     maxBurnAmount,
     maxBurnAmountBN,
     sUSDBalance,
-    issuanceRatio,
-    SNXPrice,
-    burnAmountToFixCRatio,
-    debtEscrow
+    //issuanceRatio,
+    //SNXPrice,
+    burnAmountToFixCRatio
+    //debtEscrow
   } = useGetDebtData(address, sUSDBytes);
 
   const getMaxSecsLeftInWaitingPeriod = useCallback(async () => {
@@ -285,6 +286,7 @@ function Mint({ address, appsSdk }: any) {
         snxJSConnector.utils.parseEther(amountToBurn.toString())
       ]);
     } catch (error) {
+      console.error(error);
       setError(error.message);
     }
 
@@ -296,6 +298,40 @@ function Mint({ address, appsSdk }: any) {
     };
 
     appsSdk.sendTransactions([tx]);
+  };
+
+  const renderSubmitButton = () => {
+    if (issuanceDelay) {
+      return (
+        <>
+          <BurnButton onClick={getIssuanceDelay}>Retry</BurnButton>
+          <Text size="sm">
+            There is a waiting period after minting before you can burn. Please
+            wait {secondsToTime(issuanceDelay)} before attempting to burn sUSD.
+          </Text>
+        </>
+      );
+    } else if (waitingPeriod) {
+      return (
+        <>
+          <BurnButton onClick={getMaxSecsLeftInWaitingPeriod}>Retry</BurnButton>
+          <Text size="sm">
+            There is a waiting period after completing a trade. Please wait{' '}
+            {secondsToTime(waitingPeriod)} before attempting to burn sUSD.
+          </Text>
+        </>
+      );
+    } else {
+      return (
+        <BurnButton
+          variant="contained"
+          onClick={handleBurn}
+          disabled={!!error || !numbro(burnAmount).value() || sUSDBalance === 0}
+        >
+          Burn Now
+        </BurnButton>
+      );
+    }
   };
 
   return (
@@ -344,13 +380,7 @@ function Mint({ address, appsSdk }: any) {
             />
           </Grid>
         </Grid>
-        <BurnButton
-          variant="contained"
-          onClick={handleBurn}
-          disabled={!!error || !numbro(burnAmount).value() || sUSDBalance === 0}
-        >
-          Burn Now
-        </BurnButton>
+        {renderSubmitButton()}
       </StyledPaper>
     </>
   );
