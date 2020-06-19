@@ -16,6 +16,14 @@ const Asset = styled.div``;
 
 const StyledTotalSnx = styled(Grid)``;
 
+const StyledText = styled(Text)`
+  font-size: .7em;
+
+  @media screen and (max-width: 800px) {
+    font-size: .65em;
+  }
+`;
+
 const StyledLinearProgress = styled(LinearProgress)`
   &.MuiLinearProgress-root {
     height: 15px;
@@ -52,15 +60,15 @@ const TotalSnx = () => {
       </Grid>
       <Divider />
       <Grid item xs={6}>
-        <Text size="sm">
+        <StyledText size="sm">
           Locked:{' '}
           {formatCurrency(snxBalance - data?.debtData?.transferable || 0)}
-        </Text>
+        </StyledText>
       </Grid>
       <Grid item xs={6}>
-        <Text size="sm">
+        <StyledText size="sm">
           Transferable: {formatCurrency(data?.debtData?.transferable || 0)}
-        </Text>
+        </StyledText>
       </Grid>
       <Grid item xs={12}>
         <StyledLinearProgress
@@ -72,12 +80,12 @@ const TotalSnx = () => {
         />
       </Grid>
       <Grid item xs={6}>
-        <Text size="sm">Staked: {formatCurrency(snxLocked)}</Text>
+        <StyledText size="sm">Staked: {formatCurrency(snxLocked)}</StyledText>
       </Grid>
       <Grid item xs={6}>
-        <Text size="sm">
+        <StyledText size="sm">
           Not staked: {formatCurrency(snxBalance - snxLocked || 0)}
-        </Text>
+        </StyledText>
       </Grid>
       <Grid item xs={12}>
         <StyledLinearProgress
@@ -124,7 +132,7 @@ function Balance() {
             <Asset key={asset}>
               <IconText
                 iconSize="sm"
-                textSize="lg"
+                textSize="sm"
                 iconType={asset.toLocaleLowerCase()}
                 text={`1 ${asset} = $
                   ${formatCurrency(rates[asset])} USD`}
