@@ -2931,10 +2931,8 @@
   resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.0.5.tgz#29ffee348c177cce6727fac8de6e34c5b6a49b31"
   integrity sha512-e9slq1gmA/Z1/wc0v9I9EoaY0leliIYMCHF96D5tE9LKBadHDQKPly8WijmHb5FWk8JsN5EyOFkgL8cqiJdjcw==
 
-"@walletconnect/utils@^1.0.0", "@walletconnect/utils@^1.0.5":
+"@walletconnect/utils@^1.0.0", "@walletconnect/utils@^1.0.5", "@walletconnect/utils@file:./libs/@walletconnect/utils":
   version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.0.5.tgz#0cfda7ced437061bad4125f24865925d2faf1f2a"
-  integrity sha512-Qdm/CPOdF8Oc4DpiGXXa8fX4lyJVOBEYGSr6IuO0sDWbM/yMwkVjagjCHzk4jdgKVXWP+G5ojq4u5EcrJ/s2IA==
   dependencies:
     "@walletconnect/types" "^1.0.5"
     detect-browser "5.1.0"
